@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sight Reader</title>
+</head>
+
+<body onload="updateSlider()">
+
+<form onchange="gradeChangedTrue()">
+  <input type="checkbox" id="0" checked="checked">Grade 0</input>
+  <input type="checkbox" id="1">Grade 1</input>
+  <input type="checkbox" id="2">Grade 2</input>
+  <input type="checkbox" id="3">Grade 3</input>
+  <input type="checkbox" id="4">Grade 4</input>
+  <input type="checkbox" id="5">Grade 5</input>
+</form>
+<br/>
+<span id="sliderValue"></span>
+<input type="range" max="30000" min="1000" step="1000" value="1000" id="slider" onchange="updateSlider()"></input>
+<button onclick="beginTimer()">Go</button>
+<button onclick="stopTimer()">Stop</button><br/>
+<p id="p"></p>
+<img id="scaleImage" style="width:100%">
+
+
+<script type="text/javascript">
+
+var grade0 = ["images/g0e1.png", "images/g0e2.png", "images/g0e3.png", "images/g0e4.png", "images/g0e5.png"];
+var grade1 = ["images/g1e1.png", "images/g1e2.png", "images/g1e3.png", "images/g1e4.png", "images/g1e5.png", "images/g1e6.png"];
+var grade2 = ["images/g2e1.png", "images/g2e2.png", "images/g2e3.png", "images/g2e4.png", "images/g2e5.png", "images/g2e6.png", "images/g2e7.png"];
+var grade3 = ["images/g3e1.png", "images/g3e2.png", "images/g3e3.png", "images/g3e4.png", "images/g3e5.png", "images/g3e6.png", "images/g3e7.png"];
+var grade4 = ["images/g4e1.png", "images/g4e2.png", "images/g4e3.png", "images/g4e4.png", "images/g4e5.png", "images/g4e6.png", "images/g4e7.png", "images/g4e8.png"];
+var grade5 = ["images/g5e1.png", "images/g5e2.png", "images/g5e3.png", "images/g5e4.png", "images/g5e5.png", "images/g5e6.png", "images/g5e7.png", "images/g5e8.png", "images/g5e9.png", "images/g5e10.png", "images/g5e11.png"];
+
+
+var oldRandomNum;
+var timer;
+var timerRunning = false;
+var gradeChanged = true;
+var imageList = [];
+
+function updateSlider(){
+  document.getElementById("sliderValue").innerHTML = document.getElementById("slider").value/1000 + "s";
+  if( timerRunning ){
+    beginTimer();
+  }
+}
+
+function gradeChangedTrue(){
+  gradeChanged = true;
+}
+
+function checkTimer(){
+  if( timerRunning ){
+    beginTimer();
+  }
+}
+
+function beginTimer(){
+  randomScale();
+  clearInterval( timer );
+  timer = setInterval( randomScale, document.getElementById("slider").value );
+  timerRunning = true;
+}
+
+function stopTimer(){
+  clearInterval( timer );
+  timerRunning = false;
+}
+
+function randomScale(){
+  if( gradeChanged ){
+    imageList = [];
+    for( var i=0; i<=5; i++ ){   // for grade0 to grade3
+      if( document.getElementById(i).checked ){
+        imageList = imageList.concat( eval("grade"+i) );
+      }
+    }
+    gradeChanged = false;
+  }
+  if( imageList.length > 0 ){
+    var newRandomNum = Math.floor(Math.random()*imageList.length);
+    if(newRandomNum!=oldRandomNum){
+      oldRandomNum = newRandomNum;
+      document.getElementById("p").innerHTML = "";
+      document.getElementById("scaleImage").src = imageList[newRandomNum];
+    }
+    else{
+      randomScale();
+    }
+  }
+  else{
+    document.getElementById("p").innerHTML = "No grades selected. Timer stopped.";
+    stopTimer();
+  }
+}
+
+</script>
+
+</body>
+
+</html>
